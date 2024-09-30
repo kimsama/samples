@@ -45,7 +45,8 @@ builder.WebHost.UseKestrel((ctx, kestrelOptions) =>
 {
     // To avoid port conflicts, each Web server must listen on a different port.
     int instanceId = ctx.Configuration.GetValue<int>("InstanceId");
-    kestrelOptions.ListenLocalhost(5001 + instanceId);
+    //kestrelOptions.ListenLocalhost(5001 + instanceId);
+    kestrelOptions.ListenLocalhost(5000 + instanceId);
 });
 builder.Services.AddHostedService<HubListUpdater>();
 builder.Services.AddSignalR().AddJsonProtocol();
@@ -55,10 +56,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
+//app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseDefaultFiles();
 app.UseRouting();
 app.UseAuthorization();
 app.MapHub<LocationHub>("/locationHub");
+app.MapGet("/", () => "Hello from HTTP!");
 app.MapPrometheusScrapingEndpoint();
 app.Run();
